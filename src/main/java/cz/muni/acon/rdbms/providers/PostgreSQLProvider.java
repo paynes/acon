@@ -1,6 +1,6 @@
-package cz.muni.acon.providers;
+package cz.muni.acon.rdbms.providers;
 
-import cz.muni.acon.providers.IRDBMSProvider;
+import cz.muni.acon.exceptions.ConvertorException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -22,30 +22,36 @@ public final class PostgreSQLProvider implements IRDBMSProvider{
         this.password = password;
     }
     
-    public PostgreSQLProvider(String ip, String port, String DBName, String user, String password) {
-        this(String.format("jdbc:postgresql://%s:%s/%s", ip,port,DBName),user,password);
-    }
-    
-    private Connection init(String path, String user, String password) {
+    private Connection init(String path, String user, String password) throws ConvertorException {
         try {
             this.connection = DriverManager.getConnection(path, user, password);
         } catch (SQLException ex) {
-            this.connection = null;
+            throw new ConvertorException(ex.getLocalizedMessage());
         }
         return this.connection;
     }
     
-    public Connection getConnection() {
+    @Override
+    public Connection getConnection() throws ConvertorException {
         if (this.connection == null) {
-            return this.init(this.url,this.user,this.password);
+            try {
+                return this.init(this.url,this.user,this.password);
+            } catch (ConvertorException ex) {
+                throw new ConvertorException("Cannot create connection to RDBMS database: " + ex);
+            }
         } else {
             return this.connection;
         }
     }
 
-    public void closeConnection() throws SQLException {
-        this.connection.close();
-        this.connection = null;
+    @Override
+    public void closeConnection() throws ConvertorException {
+        try {
+            this.connection.close();
+            this.connection = null;
+        } catch (SQLException ex) {
+            throw new ConvertorException("Cannot close connection to RDBMS: " + ex);
+        }
     }
     
     

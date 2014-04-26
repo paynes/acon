@@ -1,15 +1,15 @@
-package cz.muni.acon.providers;
+package cz.muni.acon.rdbms.providers;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import cz.muni.acon.exceptions.ConvertorException;
 
 /**
  *
  * @author Jan Koscak
+ * @param <T>
  */
-public interface IRDBMSProvider {
+public interface IRDBMSProvider<T> {
     
-    public Connection getConnection();
+    public T getConnection() throws ConvertorException;
     
-    public void closeConnection() throws SQLException;
+    public void closeConnection() throws ConvertorException;
 }
