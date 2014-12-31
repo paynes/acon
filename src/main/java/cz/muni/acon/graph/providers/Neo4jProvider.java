@@ -15,10 +15,12 @@ public class Neo4jProvider implements IGraphProvider<GraphDatabaseService> {
         this.graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(path);
     }
 
+    @Override
     public GraphDatabaseService getDatabaseConnection() {
         return this.graphDb;
     }
 
+    @Override
     public void closeDatabaseConnection() {
         this.graphDb.shutdown();
     }

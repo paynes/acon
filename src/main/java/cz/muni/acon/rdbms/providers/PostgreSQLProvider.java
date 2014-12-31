@@ -1,5 +1,6 @@
 package cz.muni.acon.rdbms.providers;
 
+import com.google.common.base.Preconditions;
 import cz.muni.acon.exceptions.ConvertorException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,17 +13,20 @@ import java.sql.SQLException;
 public final class PostgreSQLProvider implements IRDBMSProvider{
     
     private final String url;
+    
     private final String user;
+    
     private final String password;
+    
     private Connection connection;
     
-    public PostgreSQLProvider(String url, String user, String password) {
+    public PostgreSQLProvider(final String url,final String user,String password) throws IllegalArgumentException {
         this.url = url;
         this.user = user;
         this.password = password;
     }
     
-    private Connection init(String path, String user, String password) throws ConvertorException {
+    private Connection init(final String path,final String user, final String password) throws ConvertorException {
         try {
             this.connection = DriverManager.getConnection(path, user, password);
         } catch (SQLException ex) {
