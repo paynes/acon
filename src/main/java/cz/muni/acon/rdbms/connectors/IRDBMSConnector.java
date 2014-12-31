@@ -15,4 +15,6 @@ public interface IRDBMSConnector {
     public void setSchema(final String schema);
     
     public List<NodeModel> getNodeModels(final String tableName) throws ConvertorException;
+    
+    public int getNumberOfRows(final String tableName) throws ConvertorException;
 }

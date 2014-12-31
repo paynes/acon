@@ -31,6 +31,31 @@ public class RDBMSConnector implements IRDBMSConnector{
         this.provider = provider;
         this.schema = null;
     }
+    
+    /**
+     *
+     * @param tableName
+     * @return
+     * @throws ConvertorException
+     */
+    @Override
+    public int getNumberOfRows(final String tableName) throws ConvertorException {
+        try {
+            String schema = "";
+            if (this.schema != null && !this.schema.isEmpty()) {
+                schema = this.schema + ".";
+            }
+            PreparedStatement ps = provider.getConnection().prepareStatement("SELECT COUNT(*) AS row FROM " + schema + tableName);
+            ResultSet rs = ps.executeQuery();
+            int result = 0;
+            while (rs.next()) {
+                return rs.getInt("row");
+            }
+            return result;
+        } catch (SQLException ex) {
+            throw new ConvertorException("" + ex);
+        }
+    }
        
     @Override
     public List<NodeModel> getNodeModels(final String tableName) throws ConvertorException {

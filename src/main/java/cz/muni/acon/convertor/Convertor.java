@@ -77,11 +77,42 @@ public class Convertor {
     
     public void convert() throws ConvertorException{
         try {
+            int limit = 1000;
             Map<List<Property>,Long> primaryKeys = new HashMap<List<Property>,Long>();
             Map<RelationshipModel, List<Property>> incompleteModels = new HashMap<RelationshipModel, List<Property>>();
             for (String tableName : this.rdbms.getTables()) {
                 System.out.println(tableName);
-                List<NodeModel> nodeModels = this.rdbms.getNodeModels(tableName);
+                System.out.println(this.rdbms.getNumberOfRows(tableName));
+                int limit2 = this.rdbms.getNumberOfRows(tableName);
+                if (limit2 > limit) {
+                    
+                } else {
+                    List<NodeModel> nodeModels = this.rdbms.getNodeModels(tableName);
+                    nodeModels = this.graph.createNodes(nodeModels);
+                    //ziskame primarne kluce
+                    Map<List<Property>,Long> extractedPrimaryKeys = this.extractPrimaryKeys(nodeModels);
+                    //zo ziskanych klucov sa snazime vytvorit relationships
+                    Map<RelationshipModel, List<Property>> completedRelationshipModels = this.completeRelationShips(incompleteModels, extractedPrimaryKeys);
+                    //vytvarame nove modely relationships
+                    Map<RelationshipModel, List<Property>> newIncompletRelationshipModels = this.createRelationShipsModels(nodeModels);
+                    //snazime sa vytvorit relationships z novych modelov
+                    completedRelationshipModels.putAll(this.completeRelationShips(newIncompletRelationshipModels, primaryKeys));
+                    //dokoncene modely posielame do graph provideru a nedokoncene modely pridavame do zoznamu
+                    incompleteModels = this.createRelationhips(completedRelationshipModels);
+                    //ziskane kluce pridavame do zoznamu
+                    primaryKeys.putAll(extractedPrimaryKeys);
+                }
+            }
+            this.graph.reduceNMrelationships();
+            this.graph.closeDatabase();
+            
+        } catch (ConvertorException ex) {
+            throw new ConvertorException(ex.getMessage());
+        }
+    }
+    
+    /*private void convertTable(String tableName) throws ConvertorException {
+        List<NodeModel> nodeModels = this.rdbms.getNodeModels(tableName);
                 nodeModels = this.graph.createNodes(nodeModels);
                 //ziskame primarne kluce
                 Map<List<Property>,Long> extractedPrimaryKeys = this.extractPrimaryKeys(nodeModels);
@@ -95,12 +126,5 @@ public class Convertor {
                 incompleteModels = this.createRelationhips(completedRelationshipModels);
                 //ziskane kluce pridavame do zoznamu
                 primaryKeys.putAll(extractedPrimaryKeys);
-            }
-            this.graph.reduceNMrelationships();
-            this.graph.closeDatabase();
-            
-        } catch (ConvertorException ex) {
-            throw new ConvertorException(ex.getMessage());
-        }
-    }
+    }*/
 }
