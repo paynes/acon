@@ -21,9 +21,6 @@ public final class PostgreSQLProvider implements IRDBMSProvider{
     private Connection connection;
     
     public PostgreSQLProvider(final String url,final String user,String password) throws IllegalArgumentException {
-        Preconditions.checkArgument(url != null && !url.isEmpty(), "Postgres url should not be bull.");
-        Preconditions.checkArgument(user != null && !user.isEmpty(), "Postgres user should not be bull.");
-        Preconditions.checkArgument(password != null && !password.isEmpty(), "Postgres password should not be bull.");
         this.url = url;
         this.user = user;
         this.password = password;

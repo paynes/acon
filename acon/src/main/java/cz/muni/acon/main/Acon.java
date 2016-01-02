@@ -4,14 +4,9 @@ package cz.muni.acon.main;
 import cz.muni.acon.convertor.Convertor;
 import cz.muni.acon.exceptions.ConvertorException;
 import cz.muni.acon.graph.connectors.Neo4JConnector;
-import cz.muni.acon.rdbms.connectors.IRDBMSConnector;
 import cz.muni.acon.rdbms.connectors.RDBMSConnector;
-import cz.muni.acon.convertor.Property;
 import cz.muni.acon.graph.providers.Neo4jProvider;
 import cz.muni.acon.rdbms.providers.PostgreSQLProvider;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

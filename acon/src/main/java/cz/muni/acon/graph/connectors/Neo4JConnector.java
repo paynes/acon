@@ -38,7 +38,7 @@ public class Neo4JConnector implements IGraphConnector {
     @Override
     public List<NodeModel> createNodes(final List<NodeModel> nodeModels) {
         try (Transaction tx = this.getTransaction()) {
-            List<NodeModel> newNodeModels = new ArrayList<>();
+            List<NodeModel> newNodeModels = new ArrayList<NodeModel>();
             for (NodeModel nm : nodeModels) {
                 final Node node = this.getGraphDB().createNode(DynamicLabel.label(nm.getTableName()));
                 this.setNodeProperties(node, nm.getColumnsList());
@@ -48,6 +48,7 @@ public class Neo4JConnector implements IGraphConnector {
             return newNodeModels;
         } catch (SQLException ex) {
             Logger.getLogger(Neo4JConnector.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("CHYBA");
         }
         return null;
     }
@@ -151,15 +152,15 @@ public class Neo4JConnector implements IGraphConnector {
             Node second = relationships.get(1).getStartNode();
             RelationshipType secondType = relationships.get(1).getType();
             for (Label label : node.getLabels()) {
-                if (!(label.name().equals(firstType.name()) || label.equals(secondType.name()))) {
+                if (!(label.name().equals(firstType.name()) || label.name().equals(secondType.name()))) {
                     long id = Long.valueOf(label.name());
                     if (first.getId() == id) {
                         first.createRelationshipTo(second, secondType);
                     } else if (second.getId() == id) {
                         second.createRelationshipTo(first, firstType);
                     }
+                    node.removeLabel(label);
                 }
-                node.removeLabel(label);
             }
             for (Relationship r : relationships) {
                 r.delete();
